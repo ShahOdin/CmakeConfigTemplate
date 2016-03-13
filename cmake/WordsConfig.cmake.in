@@ -1,0 +1,29 @@
+@PACKAGE_INIT@
+
+#Looks up the info about the exported targets in this package
+IF(NOT TARGET @PROJECT_NAME@)
+INCLUDE(${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@Exports.cmake)
+ENDIF()
+
+############################################################
+
+##The public variables to be used by the client project:
+#PROJECT_NAME_INCLUDE_DIRS is all the include paths
+#PROJECT_NAME_LIBRARIES is the name of all the libraries
+##ie the client package can use proj1_INCLUDE_DIRS and proj1_LIBRARIES
+
+
+## PROJECT_LIBRARIES is filled-in during the package build
+SET(@PROJECT_NAME@_LIBRARIES @PROJECT_LIBRARIES@)
+
+## PACKAGE_PROJECT_DIRNAME_include is filled-in during the package build
+FOREACH(lib ${@PROJECT_NAME@_LIBRARIES})
+list(APPEND INCLUDE_DIRS @PACKAGE_PROJECT_DIRNAME_include@/${lib})
+ENDFOREACH(lib)
+
+#set_and_check() Makes sure that the created Config file does not contain
+#wrong references. Then we add it to the public PROJECT_NAME_INCLUDE_DIRS
+foreach (INCLUDE_DIR ${INCLUDE_DIRS})
+set_and_check(@PROJECT_NAME@_INCLUDE_DIR ${INCLUDE_DIR})
+list(APPEND @PROJECT_NAME@_INCLUDE_DIRS ${@PROJECT_NAME@_INCLUDE_DIR})
+endforeach ()
